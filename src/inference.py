@@ -5,12 +5,14 @@ import numpy as np
 import config
 from sklearn.preprocessing import LabelEncoder
 
+actual_model = "xgb"
+
 def predict(models):
     test  = pd.read_csv(config.TEST_FILE)
     sample = pd.read_csv(config.SAMPLE_FILE)
     predictions = None
 
-    label_encoder = LabelEncoder()
+    label_encoder = joblib.load(os.path.join(config.MODEL_OUTPUT, f"{label_encoder}.pkl"))
     test.Target = label_encoder.fit_transform(test.Target)
 
     for model in models:
@@ -18,25 +20,23 @@ def predict(models):
             clf = joblib.load(os.path.join(config.MODEL_OUTPUT, f"{model}_{fold}.pkl"))
             preds = clf.predict_proba(test)
             if fold == 0:
-                predictions = np.argmax(preds, axis=1)
+                predictions = preds
             else:
-                predictions += np.argmax(preds, axis=1)
+                predictions += preds
 
         predictions = predictions / 5
 
-        if model == 'xgb':
+        if model == actual_model:
             ens_preds = predictions
         else:
             ens_preds += predictions
 
-    ens_preds = ens_preds / len(models)
-
+    ens_preds = np.argmax(ens_preds / len(models), axis=1)
     sample.Target = label_encoder.inverse_transform(ens_preds.astype(float))
     print(sample.head())
     return sample
 
-
 if __name__ == "__main__":
-    models = ["xgb"] #["hist", "cat", "gbm", "lgbm", "xgb"]
+    models = [actual_model]                #["hist", "cat", "gbm", "lgbm", "xgb"]
     submission = predict(models)
-    submission.to_csv(f"../output/xgb_baseline.csv", index=False)
+    submission.to_csv(f"../output/{actual_model}.csv", index=False)

@@ -2,6 +2,8 @@ import config
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold
 from sklearn.preprocessing import LabelEncoder
+import joblib
+import os
 
 if __name__ == "__main__":
     # import the dataset
@@ -17,9 +19,10 @@ if __name__ == "__main__":
     y = df.Target.values
     label_encoder = LabelEncoder()
     df.Target = label_encoder.fit_transform(y)
+    joblib.dump(label_encoder, os.path.join(config.MODEL_OUTPUT, f"{label_encoder}.pkl"))
 
     # initiate the Stratified Kfold class from model_selection module
-    skf = StratifiedKFold(n_splits=5)
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=2024)
     # fill the new kfold column
     for fold, (trn_, val_) in enumerate(skf.split(X=df, y=y)):
         df.loc[val_, 'kfold'] = fold
