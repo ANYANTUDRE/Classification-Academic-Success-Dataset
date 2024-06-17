@@ -3,13 +3,12 @@ import model_dispatcher
 import joblib
 import numpy as np
 import pandas as pd 
-from sklearn import metrics
+from sklearn import metrics, preprocessing
+import os
+from utils import mean_target_encoding, feature_engineering
 
 
-def run(fold, model):
-    # read the training data with folds
-    df = pd.read_csv(config.TRAINING_FILE)
-
+def run(df, fold, model):
     df_train = df[df.kfold != fold].reset_index(drop=True)
     df_valid = df[df.kfold == fold].reset_index(drop=True)
 
@@ -31,12 +30,23 @@ def run(fold, model):
     score = metrics.accuracy_score(y_valid, np.argmax(preds, axis=1))
     print(f"Fold--->{fold}, accuracy={score:.5f}")
     #print(f"Confusion Matrix:\n {metrics.confusion_matrix(y_valid, preds)}")
+
+    # save the model
+    joblib.dump(clf, os.path.join(config.MODEL_OUTPUT, f"{model}_{fold}_target_enc.pkl"))
     return score
 
+
 if __name__ == "__main__":
+    # read the training data with folds
+    df = pd.read_csv(config.TRAINING_FILE)
+
+    #df = mean_target_encoding(df, alpha=5)
+    #df = feature_engineering(df)
+    print(df.head(1))
+
     scores = []
-    for fold in range(5):
-        score = run(fold=fold, model="xgb")
+    for fold in range(config.N_FOLDS):
+        score = run(df=df, fold=fold, model="gbm")
         scores.append(score)
 
     print(f"Mean score: {np.mean(scores)}")

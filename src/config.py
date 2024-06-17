@@ -5,3 +5,5 @@ TRAINING_FILE = "../input/train_folds.csv"
 ## ORIGINAL_FILE = "../input/"
 SAMPLE_FILE = "../input/sample_submission.csv"
 MODEL_OUTPUT  = "../models/"
+
+N_FOLDS = 7

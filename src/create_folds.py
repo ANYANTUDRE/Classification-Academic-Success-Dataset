@@ -22,7 +22,7 @@ if __name__ == "__main__":
     joblib.dump(label_encoder, os.path.join(config.MODEL_OUTPUT, f"{label_encoder}.pkl"))
 
     # initiate the Stratified Kfold class from model_selection module
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=2024)
+    skf = StratifiedKFold(n_splits=config.N_FOLDS)
     # fill the new kfold column
     for fold, (trn_, val_) in enumerate(skf.split(X=df, y=y)):
         df.loc[val_, 'kfold'] = fold
