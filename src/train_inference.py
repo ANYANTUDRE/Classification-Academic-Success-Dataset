@@ -40,13 +40,13 @@ if __name__ == "__main__":
     # read the training data with folds
     df = pd.read_csv(config.TRAINING_FILE)
 
-    #df = mean_target_encoding(df, alpha=5)
+    df = mean_target_encoding(df, alpha=2)
     #df = feature_engineering(df)
     print(df.head(1))
 
     scores = []
     for fold in range(config.N_FOLDS):
-        score = run(df=df, fold=fold, model="gbm")
+        score = run(df=df, fold=fold, model="xgb_tuned1")
         scores.append(score)
 
     print(f"Mean score: {np.mean(scores)}")

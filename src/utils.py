@@ -40,11 +40,11 @@ def test_mean_target_encoding(train, test, alpha=5):
     # list of numerical columns
     cat_cols = ['Marital status',
                 'Application mode',
-                'Course',
-                'Previous qualification', #no
+                #'Course',
+                #'Previous qualification', #no
                 'Nacionality',   # no but can be interesting
                 "Mother's qualification", 
-                "Father's qualification", 
+                #"Father's qualification", 
                 "Mother's occupation",
                 ]
 

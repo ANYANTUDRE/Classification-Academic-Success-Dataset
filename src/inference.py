@@ -5,7 +5,7 @@ import numpy as np
 import config
 from utils import test_mean_target_encoding
 
-actual_model = "xgb_tuned"
+actual_model = "xgb_tuned1"
 
 def predict(test, sample, models):
     predictions = None
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     test  = pd.read_csv(config.TEST_FILE)
     sample = pd.read_csv(config.SAMPLE_FILE)
 
-    #test = test_mean_target_encoding(train, test, alpha=5)
+    test = test_mean_target_encoding(train, test, alpha=5)
 
     models = [actual_model]                #["hist", "cat", "gbm", "lgbm", "xgb"]
     submission = predict(test, sample, models)
